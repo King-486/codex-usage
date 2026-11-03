@@ -95,6 +95,22 @@ def main() -> None:
         "ts": int(time.time()),
     }
 
+    # 数据没变化就不写文件，避免每 10 分钟产生一个无意义的提交
+    def core(doc):
+        def one(key):
+            win = doc.get(key) or {}
+            return (win.get("used"), win.get("reset"))
+        return (doc.get("plan"), one("h5"), one("d7"))
+
+    try:
+        with open(OUT_PATH, encoding="utf-8") as fh:
+            previous = json.load(fh)
+        if core(previous) == core(document):
+            print("[跳过] 额度没有变化，不更新文件")
+            return
+    except (OSError, ValueError):
+        pass  # 文件不存在或损坏，正常写入
+
     with open(OUT_PATH, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(document, fh, ensure_ascii=False, indent=1)
         fh.write("\n")
