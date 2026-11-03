@@ -1,6 +1,11 @@
-# 密码文件，绝对不要提交
+# 本地临时文件，绝不提交
+_libs/
+_wheels/
+_tmp/
+_*.py
+_*.json
+_*.txt
 credentials.txt
-*.local.txt
 
 # 系统杂物
 .DS_Store
