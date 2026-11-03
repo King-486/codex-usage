@@ -1,0 +1,40 @@
+name: codex-usage
+
+# 每 10 分钟跑一次；也可以到 Actions 页面手动点 Run workflow
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 需要写权限，才能把 usage.json 提交回来
+
+concurrency:
+  group: codex-usage
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 取出仓库
+        uses: actions/checkout@v4
+
+      - name: 查询额度
+        run: python3 fetch_usage.py
+        env:
+          CODEX_TOKEN: ${{ secrets.CODEX_TOKEN }}
+          CODEX_ACCOUNT_ID: ${{ secrets.CODEX_ACCOUNT_ID }}
+
+      - name: 提交结果
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add usage.json
+          if git diff --staged --quiet; then
+            echo "内容没有变化，跳过提交"
+          else
+            git commit -m "chore: update usage $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push
+          fi
