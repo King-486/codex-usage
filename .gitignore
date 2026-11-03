@@ -1,0 +1,9 @@
+# 密码文件，绝对不要提交
+credentials.txt
+*.local.txt
+
+# 系统杂物
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
