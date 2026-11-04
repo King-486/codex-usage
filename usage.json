@@ -1,17 +1,20 @@
 {
+ "schema": 2,
  "ok": true,
  "plan": "plus",
  "h5": {
-  "used": 0,
-  "left": 100.0,
-  "reset": 1793820261,
+  "used": 21.0,
+  "left": 79.0,
+  "reset": 1793830524,
   "win": 18000
  },
  "d7": {
-  "used": 16,
-  "left": 84.0,
+  "used": 19.0,
+  "left": 81.0,
   "reset": 1794379085,
   "win": 604800
  },
- "ts": 1793802261
+ "ts": 1793813968,
+ "last_success_at": 1793813968,
+ "error": null
 }
