@@ -1,36 +1,55 @@
-name: codex-usage
+name: Nox continuous quota data
 
 on:
   schedule:
-    - cron: "3-59/5 * * * *"
+    - cron: "13,43 * * * *"
   workflow_dispatch:
+    inputs:
+      minutes:
+        description: "本轮采集分钟数，自动接续使用 45 分钟"
+        type: choice
+        options: ["45", "3"]
+        default: "45"
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: codex-usage
   cancel-in-progress: false
 
 jobs:
-  fetch:
+  collect:
+    if: github.event.repository.private == false
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
-      - name: 查询并记录真实状态
-        id: quota
-        run: python3 fetch_usage.py
-        env:
-          CODEX_TOKEN: ${{ secrets.CODEX_TOKEN }}
-          CODEX_ACCOUNT_ID: ${{ secrets.CODEX_ACCOUNT_ID }}
-      - name: 发布查询时间与失败状态
-        if: always()
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: King-486/nox-quota-worker
+          path: private-state
+          ssh-key: ${{ secrets.NOX_STATE_READ_KEY }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 安装采集器依赖
+        id: install
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add usage.json
-          if ! git diff --staged --quiet; then
-            git commit -m "chore: publish quota query status"
-            git push
-          fi
+          python -m venv "$RUNNER_TEMP/nox-env"
+          "$RUNNER_TEMP/nox-env/bin/pip" install --disable-pip-version-check -r requirements-collector.txt
+      - name: 连续采集，每两分钟发布一次
+        id: monitor
+        env:
+          NOX_ACCESS_KEY: ${{ secrets.NOX_ACCESS_KEY }}
+          NOX_WINDOW_MINUTES: ${{ inputs.minutes || '45' }}
+        run: '"$RUNNER_TEMP/nox-env/bin/python" public_collector.py "$GITHUB_WORKSPACE/private-state" "$GITHUB_WORKSPACE" "$((NOX_WINDOW_MINUTES * 60))"'
+      - name: 自动接续下一轮采集
+        if: always() && steps.install.outcome == 'success' && steps.monitor.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --method POST "repos/$GITHUB_REPOSITORY/actions/workflows/usage.yml/dispatches" -f ref=main -f 'inputs[minutes]=45'
