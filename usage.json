@@ -3,18 +3,18 @@
  "ok": true,
  "plan": "plus",
  "h5": {
-  "used": 48.0,
-  "left": 52.0,
-  "reset": 1793863121,
+  "used": 17.0,
+  "left": 83.0,
+  "reset": 1793887932,
   "win": 18000
  },
  "d7": {
-  "used": 29.0,
-  "left": 71.0,
+  "used": 40.0,
+  "left": 60.0,
   "reset": 1794379085,
   "win": 604800
  },
- "ts": 1793847745,
- "last_success_at": 1793847745,
+ "ts": 1793885431,
+ "last_success_at": 1793885431,
  "error": null
 }
