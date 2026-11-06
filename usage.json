@@ -3,8 +3,8 @@
  "ok": true,
  "plan": "plus",
  "h5": {
-  "used": 1.0,
-  "left": 99.0,
+  "used": 3.0,
+  "left": 97.0,
   "reset": 1793976270,
   "win": 18000
  },
@@ -14,7 +14,7 @@
   "reset": 1794499927,
   "win": 604800
  },
- "ts": 1793958336,
- "last_success_at": 1793958336,
+ "ts": 1793958456,
+ "last_success_at": 1793958456,
  "error": null
 }
