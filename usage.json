@@ -1,20 +1,10 @@
 {
  "schema": 2,
- "ok": true,
- "plan": "plus",
- "h5": {
-  "used": 0.0,
-  "left": 100.0,
-  "reset": 1794518839,
-  "win": 18000
- },
- "d7": {
-  "used": 31.0,
-  "left": 69.0,
-  "reset": 1794802846,
-  "win": 604800
- },
- "ts": 1794500839,
- "last_success_at": 1794500839,
- "error": null
+ "ok": false,
+ "plan": "",
+ "h5": null,
+ "d7": null,
+ "ts": 1794500958,
+ "last_success_at": 0,
+ "error": "invalid_cache"
 }
